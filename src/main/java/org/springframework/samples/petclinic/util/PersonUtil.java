@@ -11,10 +11,12 @@ import java.util.Collection;
  */
 public class PersonUtil {
 
-	private PersonUtil() {}
+	private PersonUtil() {
+	}
 
 	/**
-	 * Duplicate name check for update operations to make sure we don't collide with other Persons
+	 * Duplicate name check for update operations to make sure we don't collide with other
+	 * Persons
 	 * @param updatingPerson - Person whose name we are to check
 	 * @param existingPerson - Original person object
 	 * @param persons - all the Person objects in the store

@@ -9,7 +9,7 @@ import java.util.Collections;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- *  Test class for TimeSlotFormatter
+ * Test class for TimeSlotFormatter
  *
  * @author Richard Mahler
  */
@@ -44,4 +44,5 @@ public class TimeSlotFormatterTest {
 		String afternoonSlot = TimeSlotFormatter.getTimeSlotDescription(9);
 		assertThat(afternoonSlot).isEqualTo("4 PM to 5 PM");
 	}
+
 }

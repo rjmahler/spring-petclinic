@@ -10,7 +10,7 @@ import java.util.Collection;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- *  Test class for PersonUtil
+ * Test class for PersonUtil
  *
  * @author Richard Mahler
  */
@@ -54,4 +54,5 @@ public class PersonUtilTest {
 		boolean result = PersonUtil.existsWithFullName(owner, owner1, existingCollection);
 		assertThat(result).isTrue();
 	}
+
 }

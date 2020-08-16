@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Utility class for formatting available time slots based on filled slots which is display in the UI
+ * Utility class for formatting available time slots based on filled slots which is
+ * display in the UI
  *
  * @author Richard Mahler
  */
