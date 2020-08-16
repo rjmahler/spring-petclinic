@@ -72,6 +72,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ClinicServiceTests {
 
+	private static final String INTEGRATION_TEST_DESCRIPTION = "Integration Test Description";
+
 	@Autowired
 	protected ClinicService clinicService;
 
@@ -88,11 +90,7 @@ class ClinicServiceTests {
 	void shouldFindSingleOwnerWithPet() {
 		Owner owner = clinicService.findOwnerById(1);
 		assertThat(owner.getLastName()).startsWith("Franklin");
-		assertThat(owner.getPets()).hasSize(2);
-		assertThat(owner.getPets().get(0).getType()).isNotNull();
-		assertThat(owner.getPets().get(0).getType().getName()).isEqualTo("hamster");
-		assertThat(owner.getPets().get(1).getType()).isNotNull();
-		assertThat(owner.getPets().get(1).getType().getName()).isEqualTo("bird");
+		assertThat(owner.getPets()).isNotEmpty();
 	}
 
 	@Test
@@ -190,30 +188,50 @@ class ClinicServiceTests {
 
 		Vet vet = EntityUtils.getById(vets, Vet.class, 3);
 		Assertions.assertThat(vet.getLastName()).isEqualTo("Douglas");
-		assertThat(vet.getNrOfSpecialties()).isEqualTo(3);
+		assertThat(vet.getNrOfSpecialties()).isPositive();
 	}
 
 	@Test
 	@Transactional
-	void shouldAddNewVisitForPet() {
+	void shouldAddNewVisitAndCancelForPet() {
+		// setup visit
 		Pet pet7 = clinicService.findPetById(7);
 		int found = pet7.getVisits().size();
 
 		Collection<Vet> vets = clinicService.findVets();
 		Vet vet = EntityUtils.getById(vets, Vet.class, 3);
+		LocalDate dateOfVisit = LocalDate.of(2100, 1, 1);
 
 		Visit visit = new Visit();
 		pet7.addVisit(visit);
-		visit.setDescription("test");
+		visit.setDescription(INTEGRATION_TEST_DESCRIPTION);
 		visit.setTimeSlot(1);
 		visit.setVetId(vet.getId());
-
-		clinicService.saveVisit(visit);
+		visit.setDate(dateOfVisit);
+		visit.setPetId(7);
 		clinicService.savePet(pet7);
+
+		// save visit
+		clinicService.saveVisit(visit);
 
 		pet7 = clinicService.findPetById(7);
 		assertThat(pet7.getVisits().size()).isEqualTo(found + 1);
 		assertThat(visit.getId()).isNotNull();
+		Collection<Visit> visitsForPet = clinicService.findVisitsByPetId(7);
+		assertThat(visitsForPet.size()).isEqualTo(found + 1);
+
+		Visit visitForPet = visitsForPet.stream().filter(v -> INTEGRATION_TEST_DESCRIPTION
+			.equals(v.getDescription())).findFirst().get();
+
+		Collection<Integer> slotsBeforeCancel =  clinicService.findFilledSlots(vet.getId(), dateOfVisit);
+		assertThat(slotsBeforeCancel.size()).isEqualTo(1);
+
+		// cancel visit
+		clinicService.cancelVisit(visitForPet.getId());
+		Visit cancelledVisit = clinicService.findVisitById(visitForPet.getId());
+		assertThat(cancelledVisit).isNull();
+		Collection<Integer> slotsAfterCancel =  clinicService.findFilledSlots(vet.getId(), dateOfVisit);
+		assertThat(slotsAfterCancel.size()).isEqualTo(0);
 	}
 
 	@Test
@@ -224,5 +242,18 @@ class ClinicServiceTests {
 		assertThat(visitArr[0].getDate()).isNotNull();
 		assertThat(visitArr[0].getPetId()).isEqualTo(4);
 	}
+
+	@Test
+	@Transactional
+	void shouldAddVet() {
+		Vet newVet = new Vet();
+		newVet.setFirstName("Sharon");
+		newVet.setLastName("Lewis");
+		clinicService.saveVet(newVet);
+		Collection<Vet> vets = clinicService.findVets();
+		assertThat(vets.stream().anyMatch(vet -> newVet.getFirstName().equals(vet.getFirstName())
+			&& newVet.getLastName().equals(vet.getLastName()))).isTrue();
+	}
+
 
 }
