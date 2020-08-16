@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+
+<html xmlns:th="https://www.thymeleaf.org" th:replace="~{fragments/layout :: layout (~{::body},'error')}">
+
+  <body>
+    <img src="../static/resources/images/pets.png" th:src="@{/resources/images/pets.png}"/>
+    <h2>Oops! It seems we hit a snag. Please click one of the menu buttons above to continue.</h2>
+    <p th:text="${message}">Exception message</p>
+  </body>
+
+</html>

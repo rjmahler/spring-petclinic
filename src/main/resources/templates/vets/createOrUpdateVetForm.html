@@ -1,0 +1,41 @@
+<html xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{fragments/layout :: layout (~{::body},'vets')}">
+
+<body>
+
+  <h2>
+    <th:block th:if="${vet['new']}">New </th:block>
+    Vet
+  </h2>
+  <form th:object="${vet}" class="form-horizontal" method="post">
+    <input type="hidden" name="id" th:value="*{id}" />
+    <div class="form-group has-feedback">
+      <input
+        th:replace="~{fragments/inputField :: input ('First Name', 'firstName', 'text')}" />
+      <input
+        th:replace="~{fragments/inputField :: input ('Last Name', 'lastName', 'text')}" />
+      <div style="margin-left:100px">
+      	<label>Specialties</label>
+        <ul  style="list-style-type:none;margin-left:60px">
+        	<li th:each="spc : ${allspecialties}">
+            	<input type="checkbox" name="selectSpecList"
+            	th:checked="${spc.isSelected}  ? 'checked'"
+            	th:value="${spc.id} + '_' + ${spc.name}"/>
+            	<label th:text="${spc.name}"></label>
+        	</li>
+    	</ul>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button
+          th:with="text=${vet['new']} ? 'Add Vet' : 'Update Vet'"
+          class="btn btn-default" type="submit" th:text="${text}">Add
+          Vet</button>
+      </div>
+    </div>
+  </form>
+
+</body>
+
+</html>
