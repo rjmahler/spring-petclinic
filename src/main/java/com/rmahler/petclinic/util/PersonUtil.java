@@ -24,7 +24,7 @@ public class PersonUtil {
 	 */
 	public static boolean existsWithFullName(Person updatingPerson, Person existingPerson,
 			Collection<? extends Person> persons) {
-		if (updatingPerson != null) {
+		if (existingPerson != null) {
 			persons.removeIf(person -> (person.getFirstName().equalsIgnoreCase(existingPerson.getFirstName())
 					&& person.getLastName().equalsIgnoreCase(existingPerson.getLastName())));
 		}

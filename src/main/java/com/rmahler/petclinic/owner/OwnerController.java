@@ -87,7 +87,7 @@ class OwnerController {
 		else {
 			this.clinicService.saveOwner(owner);
 			if (ownerId == -1) {
-				return "redirect:/owners/" + owner.getId();
+				return "redirect:/owners?lastName=";
 			}
 			return "redirect:/owners/{ownerId}";
 		}
